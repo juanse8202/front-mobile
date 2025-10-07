@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  final String baseUrl = "http://192.168.0.6:8000/api"; // Cambia a tu IP local
+  final String baseUrl = "http://192.168.0.2:8000/api"; // Cambia a tu IP local
 
   // 🔹 Login → devuelve access y refresh
   Future<Map<String, dynamic>> login(String username, String password) async {

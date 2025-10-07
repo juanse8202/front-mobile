@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../api/server.dart';
+import '../widgets/custom_text_field.dart'; // 👈 Importamos el TextField con ojito
 
 class RegistroPage extends StatefulWidget {
   const RegistroPage({super.key});
@@ -15,6 +16,18 @@ class _RegistroPageState extends State<RegistroPage> {
   final _passController = TextEditingController();
   final _pass2Controller = TextEditingController();
   final AuthService _authService = AuthService();
+
+  // 👇 Función para validar seguridad de la contraseña
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) return "Ingrese su contraseña";
+    if (value.length < 8) return "Debe tener al menos 8 caracteres";
+    if (!RegExp(r'[A-Z]').hasMatch(value)) return "Debe tener al menos una mayúscula";
+    if (!RegExp(r'[0-9]').hasMatch(value)) return "Debe tener al menos un número";
+    if (!RegExp(r'[!@#\$&*~.,;?¿¡]').hasMatch(value)) {
+      return "Debe tener al menos un carácter especial (!@#\$&*~.,;?¿¡)";
+    }
+    return null;
+  }
 
   void _register() async {
     if (_formKey.currentState!.validate()) {
@@ -39,13 +52,11 @@ class _RegistroPageState extends State<RegistroPage> {
           SnackBar(content: Text(msg)),
         );
 
-        // 🔹 Hacemos login automático después del registro
+        // 🔹 Login automático después de registro
         final tokens = await _authService.login(user, pass);
         final access = tokens["access"];
 
-        // 🔹 Mandamos al perfil con el token
         Navigator.pushReplacementNamed(context, "/perfil", arguments: access);
-
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Error: $e")),
@@ -85,27 +96,25 @@ class _RegistroPageState extends State<RegistroPage> {
                       v!.isEmpty ? "Ingrese su correo" : null,
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
+
+                // 👇 Contraseña con ojito y validación fuerte
+                CustomTextField(
                   controller: _passController,
-                  decoration: const InputDecoration(
-                    labelText: "Contraseña",
-                    border: OutlineInputBorder(),
-                  ),
-                  obscureText: true,
-                  validator: (v) =>
-                      v!.isEmpty ? "Ingrese su contraseña" : null,
+                  label: "Contraseña",
+                  isPassword: true,
+                  validator: _validatePassword,
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
+
+                // 👇 Confirmar contraseña con validación normal
+                CustomTextField(
                   controller: _pass2Controller,
-                  decoration: const InputDecoration(
-                    labelText: "Repetir contraseña",
-                    border: OutlineInputBorder(),
-                  ),
-                  obscureText: true,
+                  label: "Repetir contraseña",
+                  isPassword: true,
                   validator: (v) =>
                       v!.isEmpty ? "Repita su contraseña" : null,
                 ),
+
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: _register,

@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import '../api/server.dart';
 
 class PerfilPage extends StatefulWidget {
-  const PerfilPage({super.key});
+  final VoidCallback onToggleTheme;
+  final bool isDark;
+
+  const PerfilPage({
+    super.key,
+    required this.onToggleTheme,
+    required this.isDark,
+  });
 
   @override
   State<PerfilPage> createState() => _PerfilPageState();
@@ -42,7 +49,15 @@ class _PerfilPageState extends State<PerfilPage> {
     final lastName = userData?["last_name"] ?? "";
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Mi Perfil")),
+      appBar: AppBar(
+        title: const Text("Mi Perfil"),
+        actions: [
+          IconButton(
+            icon: Icon(widget.isDark ? Icons.wb_sunny : Icons.nightlight_round),
+            onPressed: widget.onToggleTheme,
+          ),
+        ],
+      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,

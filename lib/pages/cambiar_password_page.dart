@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../api/server.dart';
+import '../widgets/custom_text_field.dart';
 
 class CambiarPasswordPage extends StatefulWidget {
   const CambiarPasswordPage({super.key});
@@ -12,9 +13,17 @@ class _CambiarPasswordPageState extends State<CambiarPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final _oldPassController = TextEditingController();
   final _newPassController = TextEditingController();
+  final _confirmPassController = TextEditingController();
 
   void _changePassword(String token) async {
     if (_formKey.currentState!.validate()) {
+      if (_newPassController.text != _confirmPassController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Las contraseñas no coinciden ⚠️")),
+        );
+        return;
+      }
+
       try {
         await AuthService().changePassword(
           token,
@@ -22,14 +31,11 @@ class _CambiarPasswordPageState extends State<CambiarPasswordPage> {
           _newPassController.text,
         );
 
-        // ✅ Mostramos confirmación
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Contraseña cambiada con éxito 🎉")),
         );
 
-        // ✅ Redirigir al login y limpiar navegación
         Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
-
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Error: $e")),
@@ -50,20 +56,28 @@ class _CambiarPasswordPageState extends State<CambiarPasswordPage> {
           key: _formKey,
           child: Column(
             children: [
-              TextFormField(
+              CustomTextField(
                 controller: _oldPassController,
-                decoration: const InputDecoration(labelText: "Contraseña actual"),
-                obscureText: true,
+                label: "Contraseña actual",
+                isPassword: true,
                 validator: (v) =>
                     v!.isEmpty ? "Ingrese su contraseña actual" : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              CustomTextField(
                 controller: _newPassController,
-                decoration: const InputDecoration(labelText: "Nueva contraseña"),
-                obscureText: true,
+                label: "Nueva contraseña",
+                isPassword: true,
                 validator: (v) =>
                     v!.isEmpty ? "Ingrese su nueva contraseña" : null,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: _confirmPassController,
+                label: "Repetir nueva contraseña",
+                isPassword: true,
+                validator: (v) =>
+                    v!.isEmpty ? "Repita su nueva contraseña" : null,
               ),
               const SizedBox(height: 24),
               ElevatedButton(

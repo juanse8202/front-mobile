@@ -9,8 +9,21 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _isDark = false;
+
+  void _toggleTheme() {
+    setState(() {
+      _isDark = !_isDark;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,16 +32,26 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        brightness: Brightness.light,
         useMaterial3: true,
       ),
-      // 👉 Siempre inicia en LoginPage
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
+      themeMode: _isDark ? ThemeMode.dark : ThemeMode.light,
       initialRoute: "/",
       routes: {
-        "/": (context) => const LoginPage(),
-        "/perfil": (context) => const PerfilPage(),
+        "/": (context) =>
+            LoginPage(onToggleTheme: _toggleTheme, isDark: _isDark),
+        "/perfil": (context) =>
+            PerfilPage(onToggleTheme: _toggleTheme, isDark: _isDark),
         "/registro": (context) => const RegistroPage(),
         "/editar-perfil": (context) => const EditarPerfilPage(),
-        "/cambiar-password": (context) => const CambiarPasswordPage(),
+       "/cambiar-password": (context) => const CambiarPasswordPage(),
       },
     );
   }
