@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../api/server.dart';
-import '../widgets/custom_text_field.dart'; // 👈 Importamos el TextField con ojito
+import '../services/auth_service.dart';
+import '../widgets/custom_text_field.dart';
 
 class RegistroPage extends StatefulWidget {
   const RegistroPage({super.key});
@@ -17,7 +17,7 @@ class _RegistroPageState extends State<RegistroPage> {
   final _pass2Controller = TextEditingController();
   final AuthService _authService = AuthService();
 
-  // 👇 Función para validar seguridad de la contraseña
+  // Validación de contraseña fuerte
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return "Ingrese su contraseña";
     if (value.length < 8) return "Debe tener al menos 8 caracteres";
@@ -30,38 +30,41 @@ class _RegistroPageState extends State<RegistroPage> {
   }
 
   void _register() async {
-    if (_formKey.currentState!.validate()) {
-      final user = _userController.text.trim();
-      final email = _emailController.text.trim();
-      final pass = _passController.text;
-      final pass2 = _pass2Controller.text;
+    if (!_formKey.currentState!.validate()) return;
 
-      if (pass != pass2) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Las contraseñas no coinciden ❌")),
-        );
-        return;
-      }
+    final user = _userController.text.trim();
+    final email = _emailController.text.trim();
+    final pass = _passController.text;
+    final pass2 = _pass2Controller.text;
 
-      try {
-        // 🔹 Registrar usuario
-        final res = await _authService.register(user, email, pass, pass2);
-        final msg = res["message"] ?? "Registro exitoso 🎉";
+    if (pass != pass2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Las contraseñas no coinciden ❌")),
+      );
+      return;
+    }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg)),
-        );
+    final res = await _authService.register(user, email, pass, pass2);
 
-        // 🔹 Login automático después de registro
-        final tokens = await _authService.login(user, pass);
-        final access = tokens["access"];
+    if (res['success']) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Registro exitoso 🎉")),
+      );
 
+      // 🔹 Login automático
+      final loginRes = await _authService.login(user, pass);
+      if (loginRes['success']) {
+        final access = loginRes['data']['access'];
         Navigator.pushReplacementNamed(context, "/perfil", arguments: access);
-      } catch (e) {
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: $e")),
+          SnackBar(content: Text(loginRes['message'] ?? "Error al iniciar sesión")),
         );
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(res['message'] ?? "Error al registrarse")),
+      );
     }
   }
 
@@ -76,28 +79,18 @@ class _RegistroPageState extends State<RegistroPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                TextFormField(
+                CustomTextField(
                   controller: _userController,
-                  decoration: const InputDecoration(
-                    labelText: "Usuario",
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (v) =>
-                      v!.isEmpty ? "Ingrese un nombre de usuario" : null,
+                  label: "Usuario",
+                  validator: (v) => v!.isEmpty ? "Ingrese un nombre de usuario" : null,
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
+                CustomTextField(
                   controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: "Correo electrónico",
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (v) =>
-                      v!.isEmpty ? "Ingrese su correo" : null,
+                  label: "Correo electrónico",
+                  validator: (v) => v!.isEmpty ? "Ingrese su correo" : null,
                 ),
                 const SizedBox(height: 16),
-
-                // 👇 Contraseña con ojito y validación fuerte
                 CustomTextField(
                   controller: _passController,
                   label: "Contraseña",
@@ -105,16 +98,12 @@ class _RegistroPageState extends State<RegistroPage> {
                   validator: _validatePassword,
                 ),
                 const SizedBox(height: 16),
-
-                // 👇 Confirmar contraseña con validación normal
                 CustomTextField(
                   controller: _pass2Controller,
                   label: "Repetir contraseña",
                   isPassword: true,
-                  validator: (v) =>
-                      v!.isEmpty ? "Repita su contraseña" : null,
+                  validator: (v) => v!.isEmpty ? "Repita su contraseña" : null,
                 ),
-
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: _register,

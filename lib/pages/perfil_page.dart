@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../api/server.dart';
+import '../services/auth_service.dart';
 
 class PerfilPage extends StatefulWidget {
   final VoidCallback onToggleTheme;
@@ -27,13 +27,16 @@ class _PerfilPageState extends State<PerfilPage> {
   }
 
   Future<void> _loadProfile(String token) async {
-    try {
-      final data = await AuthService().getProfile(token);
+    final res = await AuthService().getProfile(token);
+
+    if (res['success']) {
       setState(() {
-        userData = data;
+        userData = res['data'];
       });
-    } catch (e) {
-      print("Error al obtener perfil: $e");
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(res['message'] ?? "Error al obtener perfil")),
+      );
     }
   }
 
@@ -76,7 +79,7 @@ class _PerfilPageState extends State<PerfilPage> {
               title: const Text("Editar Perfil"),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, "/editar-perfil");
+                Navigator.pushNamed(context, "/editar-perfil", arguments: token);
               },
             ),
             ListTile(
@@ -84,11 +87,7 @@ class _PerfilPageState extends State<PerfilPage> {
               title: const Text("Cambiar Contraseña"),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(
-                  context,
-                  "/cambiar-password",
-                  arguments: token,
-                );
+                Navigator.pushNamed(context, "/cambiar-password", arguments: token);
               },
             ),
             const Divider(),
