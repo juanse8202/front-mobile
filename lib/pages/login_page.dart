@@ -32,6 +32,8 @@ class _LoginPageState extends State<LoginPage> {
 
       if (result['success']) {
         final access = result['data']['access'];
+        // Debug: imprimir token en consola para verificar que llega correctamente
+        print('Login successful - access token: ${access}');
         Navigator.pushReplacementNamed(context, "/perfil", arguments: access);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -45,6 +47,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         title: const Text("Iniciar Sesión"),
         actions: [
           IconButton(
@@ -78,21 +81,24 @@ class _LoginPageState extends State<LoginPage> {
                   CustomTextField(
                     controller: _userController,
                     label: "Usuario",
-                    validator: (value) =>
-                        value!.isEmpty ? "Ingrese su usuario" : null,
+                    prefixIcon: Icons.person,
+                    filled: true,
+                    validator: (value) => value!.isEmpty ? "Ingrese su usuario" : null,
                   ),
                   const SizedBox(height: 16),
                   CustomTextField(
                     controller: _passController,
-                        label: "Contraseña",
+                    label: "Contraseña",
                     isPassword: true,
-                    validator: (value) =>
-                        value!.isEmpty ? "Ingrese su contraseña" : null,
+                    prefixIcon: Icons.lock,
+                    filled: true,
+                    validator: (value) => value!.isEmpty ? "Ingrese su contraseña" : null,
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: _login,
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orangeAccent.shade700,
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     child: const Text("Ingresar"),

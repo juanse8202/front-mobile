@@ -71,7 +71,7 @@ class _RegistroPageState extends State<RegistroPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Registro")),
+      appBar: AppBar(backgroundColor: Colors.deepPurple, title: const Text("Registro")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -82,12 +82,16 @@ class _RegistroPageState extends State<RegistroPage> {
                 CustomTextField(
                   controller: _userController,
                   label: "Usuario",
+                  prefixIcon: Icons.person,
+                  filled: true,
                   validator: (v) => v!.isEmpty ? "Ingrese un nombre de usuario" : null,
                 ),
                 const SizedBox(height: 16),
                 CustomTextField(
                   controller: _emailController,
                   label: "Correo electrónico",
+                  prefixIcon: Icons.email,
+                  filled: true,
                   validator: (v) => v!.isEmpty ? "Ingrese su correo" : null,
                 ),
                 const SizedBox(height: 16),
@@ -95,6 +99,8 @@ class _RegistroPageState extends State<RegistroPage> {
                   controller: _passController,
                   label: "Contraseña",
                   isPassword: true,
+                  prefixIcon: Icons.lock,
+                  filled: true,
                   validator: _validatePassword,
                 ),
                 const SizedBox(height: 16),
@@ -102,12 +108,15 @@ class _RegistroPageState extends State<RegistroPage> {
                   controller: _pass2Controller,
                   label: "Repetir contraseña",
                   isPassword: true,
+                  prefixIcon: Icons.lock,
+                  filled: true,
                   validator: (v) => v!.isEmpty ? "Repita su contraseña" : null,
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: _register,
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orangeAccent.shade700,
                     minimumSize: const Size(double.infinity, 50),
                   ),
                   child: const Text("Registrarse"),

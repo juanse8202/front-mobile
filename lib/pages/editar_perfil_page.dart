@@ -77,7 +77,7 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Editar Perfil")),
+      appBar: AppBar(backgroundColor: Colors.deepPurple, title: const Text("Editar Perfil")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -87,20 +87,23 @@ class _EditarPerfilPageState extends State<EditarPerfilPage> {
               CustomTextField(
                 controller: _nombreController,
                 label: "Nombre completo",
-                validator: (value) =>
-                    value!.isEmpty ? "Ingrese su nombre" : null,
+                prefixIcon: Icons.person,
+                filled: true,
+                validator: (value) => value!.isEmpty ? "Ingrese su nombre" : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _correoController,
                 label: "Correo electrónico",
-                validator: (value) =>
-                    value!.isEmpty ? "Ingrese su correo" : null,
+                prefixIcon: Icons.email,
+                filled: true,
+                validator: (value) => value!.isEmpty ? "Ingrese su correo" : null,
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _saveChanges,
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orangeAccent.shade700,
                   minimumSize: const Size(double.infinity, 50),
                 ),
                 child: const Text("Guardar cambios"),

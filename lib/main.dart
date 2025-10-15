@@ -5,6 +5,9 @@ import 'pages/perfil_page.dart';
 import 'pages/registro_page.dart';
 import 'pages/editar_perfil_page.dart';
 import 'pages/cambiar_password_page.dart';
+import 'pages/presupuestos_page.dart';
+import 'pages/presupuesto_detail_page.dart';
+import 'pages/generar_ordenes.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,6 +74,9 @@ class _MyAppState extends State<MyApp> {
         "/registro": (context) => const RegistroPage(),
         "/editar-perfil": (context) => const EditarPerfilPage(),
         "/cambiar-password": (context) => const CambiarPasswordPage(),
+        "/presupuestos": (context) => PresupuestosPage(),
+        "/presupuesto-detalle": (context) => const PresupuestoDetailPage(),
+        "/generar-orden": (context) => const GenerarOrdenPage(),
       },
     );
   }
