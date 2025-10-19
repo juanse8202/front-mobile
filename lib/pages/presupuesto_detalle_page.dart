@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../api/presupuestos_api.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 
 class PresupuestoDetallePage extends StatefulWidget {
   const PresupuestoDetallePage({super.key});
@@ -119,30 +118,46 @@ class _PresupuestoDetallePageState extends State<PresupuestoDetallePage>
   void _exportPDF() async {
     if (!mounted) return;
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Generando PDF...')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Generando PDF...')),
+    );
 
     try {
       final bytes = await PresupuestosApi.exportPresupuestoPDF(_presupuestoId!);
 
       if (!mounted) return;
 
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/presupuesto_$_presupuestoId.pdf');
+      // Guardar directamente en Downloads (no requiere permisos en Android 10+)
+      final directory = Directory('/storage/emulated/0/Download');
+      
+      if (!directory.existsSync()) {
+        directory.createSync(recursive: true);
+      }
+
+      final fileName = 'presupuesto_$_presupuestoId.pdf';
+      final file = File('${directory.path}/$fileName');
       await file.writeAsBytes(bytes);
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('PDF guardado en: ${file.path}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('✅ PDF guardado en Download/$fileName'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 5),
+          action: SnackBarAction(
+            label: 'OK',
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
+        ),
+      );
     } catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error al exportar PDF: $e'),
+          content: Text('Error: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -152,32 +167,46 @@ class _PresupuestoDetallePageState extends State<PresupuestoDetallePage>
   void _exportExcel() async {
     if (!mounted) return;
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Generando Excel...')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Generando Excel...')),
+    );
 
     try {
-      final bytes = await PresupuestosApi.exportPresupuestoExcel(
-        _presupuestoId!,
-      );
+      final bytes = await PresupuestosApi.exportPresupuestoExcel(_presupuestoId!);
 
       if (!mounted) return;
 
-      final dir = await getApplicationDocumentsDirectory();
-      final file = File('${dir.path}/presupuesto_$_presupuestoId.xlsx');
+      // Guardar directamente en Downloads (no requiere permisos en Android 10+)
+      final directory = Directory('/storage/emulated/0/Download');
+      
+      if (!directory.existsSync()) {
+        directory.createSync(recursive: true);
+      }
+
+      final fileName = 'presupuesto_$_presupuestoId.xlsx';
+      final file = File('${directory.path}/$fileName');
       await file.writeAsBytes(bytes);
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Excel guardado en: ${file.path}')),
+        SnackBar(
+          content: Text('✅ Excel guardado en Download/$fileName'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 5),
+          action: SnackBarAction(
+            label: 'OK',
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
+        ),
       );
     } catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error al exportar Excel: $e'),
+          content: Text('Error: $e'),
           backgroundColor: Colors.red,
         ),
       );
