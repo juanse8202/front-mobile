@@ -154,6 +154,14 @@ class _PerfilPageState extends State<PerfilPage> {
                 Navigator.pushNamed(context, '/presupuestos', arguments: {'token': token});
               },
             ),
+            ListTile(
+              leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Colors.blue.shade50, shape: BoxShape.circle), child: const Icon(Icons.directions_car, color: Colors.blue)),
+              title: const Text("Vehículos"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/vehiculos', arguments: {'token': token});
+              },
+            ),
             const Padding(padding: EdgeInsets.symmetric(horizontal: 16.0), child: Divider(color: Colors.grey)),
             ListTile(
               leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Colors.red.shade50, shape: BoxShape.circle), child: const Icon(Icons.logout, color: Colors.red)),
