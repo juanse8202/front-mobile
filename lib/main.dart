@@ -6,8 +6,12 @@ import 'pages/registro_page.dart';
 import 'pages/editar_perfil_page.dart';
 import 'pages/cambiar_password_page.dart';
 import 'pages/presupuestos_page.dart';
-import 'pages/presupuesto_detail_page.dart';
+import 'pages/presupuesto_detalle_page.dart';
+import 'pages/presupuesto_form_page.dart';
 import 'pages/generar_ordenes.dart';
+import 'pages/vehiculos_page.dart';
+import 'pages/vehiculo_form_page.dart';
+import 'pages/vehiculo_detail_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,7 +49,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Login Demo',
       debugShowCheckedModeBanner: false,
-      
+
       // 🔹 Tema claro
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -74,9 +78,13 @@ class _MyAppState extends State<MyApp> {
         "/registro": (context) => const RegistroPage(),
         "/editar-perfil": (context) => const EditarPerfilPage(),
         "/cambiar-password": (context) => const CambiarPasswordPage(),
-        "/presupuestos": (context) => PresupuestosPage(),
-        "/presupuesto-detalle": (context) => const PresupuestoDetailPage(),
+        "/presupuestos": (context) => const PresupuestosPage(),
+        "/presupuesto-form": (context) => const PresupuestoFormPage(),
+        "/presupuesto-detalle": (context) => const PresupuestoDetallePage(),
         "/generar-orden": (context) => const GenerarOrdenPage(),
+        "/vehiculos": (context) => const VehiculosPage(),
+        "/vehiculo-form": (context) => const VehiculoFormPage(),
+        "/vehiculo-detalle": (context) => const VehiculoDetailPage(),
       },
     );
   }

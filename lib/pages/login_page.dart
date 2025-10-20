@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../services/auth_service.dart';
 import '../widgets/custom_text_field.dart';
 
@@ -21,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   final _userController = TextEditingController();
   final _passController = TextEditingController();
   final AuthService _authService = AuthService();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   void _login() async {
     if (_formKey.currentState!.validate()) {
@@ -34,10 +36,23 @@ class _LoginPageState extends State<LoginPage> {
         final access = result['data']['access'];
         // Debug: imprimir token en consola para verificar que llega correctamente
         print('Login successful - access token: ${access}');
+
+        // 🔹 GUARDAR TOKEN EN SECURE STORAGE
+        await _storage.write(key: 'access_token', value: access);
+        if (result['data']['refresh'] != null) {
+          await _storage.write(
+            key: 'refresh_token',
+            value: result['data']['refresh'],
+          );
+        }
+        print('Token guardado en secure storage');
+
         Navigator.pushReplacementNamed(context, "/perfil", arguments: access);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'] ?? 'Error al iniciar sesión')),
+          SnackBar(
+            content: Text(result['message'] ?? 'Error al iniciar sesión'),
+          ),
         );
       }
     }
@@ -62,9 +77,11 @@ class _LoginPageState extends State<LoginPage> {
           key: _formKey,
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height - 
-                         MediaQuery.of(context).padding.top - 
-                         kToolbarHeight - 32,
+              minHeight:
+                  MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top -
+                  kToolbarHeight -
+                  32,
             ),
             child: IntrinsicHeight(
               child: Column(
@@ -72,7 +89,9 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   // 👇 Logo en la parte superior (más pequeño en pantallas pequeñas)
                   SizedBox(
-                    height: MediaQuery.of(context).size.height > 600 ? 150 : 100,
+                    height: MediaQuery.of(context).size.height > 600
+                        ? 150
+                        : 100,
                     width: MediaQuery.of(context).size.height > 600 ? 150 : 100,
                     child: Image.asset("assets/images/logo7.png"),
                   ),
@@ -83,7 +102,8 @@ class _LoginPageState extends State<LoginPage> {
                     label: "Usuario",
                     prefixIcon: Icons.person,
                     filled: true,
-                    validator: (value) => value!.isEmpty ? "Ingrese su usuario" : null,
+                    validator: (value) =>
+                        value!.isEmpty ? "Ingrese su usuario" : null,
                   ),
                   const SizedBox(height: 16),
                   CustomTextField(
@@ -92,7 +112,8 @@ class _LoginPageState extends State<LoginPage> {
                     isPassword: true,
                     prefixIcon: Icons.lock,
                     filled: true,
-                    validator: (value) => value!.isEmpty ? "Ingrese su contraseña" : null,
+                    validator: (value) =>
+                        value!.isEmpty ? "Ingrese su contraseña" : null,
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
