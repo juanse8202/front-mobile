@@ -7,7 +7,7 @@ class AuthService {
 
   String _shortBody(String body, [int max = 400]) {
     if (body.length <= max) return body;
-    return body.substring(0, max) + '... (truncated)';
+    return '${body.substring(0, max)}... (truncated)';
   }
 
   String _userMessageForSnippet(String snippet, int status) {
@@ -67,13 +67,13 @@ class AuthService {
           } catch (e) {
             // Respuesta 2xx pero no JSON válido
             final snippet = _shortBody(response.body);
-            print('AuthService POST $url - 2xx pero no JSON. status=${response.statusCode} body="${snippet}"');
+            print('AuthService POST $url - 2xx pero no JSON. status=${response.statusCode} body="$snippet"');
             return {"success": false, "message": _userMessageForSnippet(snippet, response.statusCode)};
           }
         } else {
           // 2xx pero no JSON
           final snippet = _shortBody(response.body);
-          print('AuthService POST $url - 2xx no-json. status=${response.statusCode} body="${snippet}"');
+          print('AuthService POST $url - 2xx no-json. status=${response.statusCode} body="$snippet"');
           return {"success": false, "message": _userMessageForSnippet(snippet, response.statusCode)};
         }
       } else {
@@ -85,12 +85,12 @@ class AuthService {
             return {"success": false, "message": msg, "errors": data};
           } catch (_) {
             final snippet = _shortBody(response.body);
-            print('AuthService POST $url - error no-json. status=${response.statusCode} body="${snippet}"');
+            print('AuthService POST $url - error no-json. status=${response.statusCode} body="$snippet"');
             return {"success": false, "message": _userMessageForSnippet(snippet, response.statusCode)};
           }
         } else {
           final snippet = response.body.isNotEmpty ? _shortBody(response.body) : 'No hay body';
-          print('AuthService POST $url - error no-json. status=${response.statusCode} body="${snippet}"');
+          print('AuthService POST $url - error no-json. status=${response.statusCode} body="$snippet"');
           return {"success": false, "message": _userMessageForSnippet(snippet, response.statusCode)};
         }
       }
@@ -113,12 +113,12 @@ class AuthService {
             return {"success": true, "data": data};
           } catch (e) {
             final snippet = _shortBody(response.body);
-            print('AuthService GET $url - 2xx pero no JSON. status=${response.statusCode} body="${snippet}"');
+            print('AuthService GET $url - 2xx pero no JSON. status=${response.statusCode} body="$snippet"');
             return {"success": false, "message": _userMessageForSnippet(snippet, response.statusCode)};
           }
         } else {
           final snippet = _shortBody(response.body);
-          print('AuthService GET $url - 2xx no-json. status=${response.statusCode} body="${snippet}"');
+          print('AuthService GET $url - 2xx no-json. status=${response.statusCode} body="$snippet"');
           return {"success": false, "message": _userMessageForSnippet(snippet, response.statusCode)};
         }
       } else {
@@ -129,12 +129,12 @@ class AuthService {
             return {"success": false, "message": msg, "errors": data};
           } catch (_) {
             final snippet = _shortBody(response.body);
-            print('AuthService GET $url - error no-json. status=${response.statusCode} body="${snippet}"');
+            print('AuthService GET $url - error no-json. status=${response.statusCode} body="$snippet"');
             return {"success": false, "message": _userMessageForSnippet(snippet, response.statusCode)};
           }
         } else {
           final snippet = response.body.isNotEmpty ? _shortBody(response.body) : 'No hay body';
-          print('AuthService GET $url - error no-json. status=${response.statusCode} body="${snippet}"');
+          print('AuthService GET $url - error no-json. status=${response.statusCode} body="$snippet"');
           return {"success": false, "message": _userMessageForSnippet(snippet, response.statusCode)};
         }
       }

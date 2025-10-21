@@ -235,6 +235,21 @@ class _PerfilPageState extends State<PerfilPage> {
                 Navigator.pushNamed(context, '/vehiculos', arguments: {'token': token});
               },
             ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.camera_alt, color: Colors.green),
+              ),
+              title: const Text("Reconocimiento de Placas"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/reconocimiento');
+              },
+            ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Divider(color: Colors.grey),

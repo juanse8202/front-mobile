@@ -12,6 +12,8 @@ import 'pages/generar_ordenes.dart';
 import 'pages/vehiculos_page.dart';
 import 'pages/vehiculo_form_page.dart';
 import 'pages/vehiculo_detail_page.dart';
+import 'pages/reconocimiento_page.dart';
+import 'pages/orden_detalles_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -85,6 +87,8 @@ class _MyAppState extends State<MyApp> {
         "/vehiculos": (context) => const VehiculosPage(),
         "/vehiculo-form": (context) => const VehiculoFormPage(),
         "/vehiculo-detalle": (context) => const VehiculoDetailPage(),
+        "/reconocimiento": (context) => const ReconocimientoPage(),
+        "/orden-detalles": (context) => const OrdenDetallesPage(),
       },
     );
   }

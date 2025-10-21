@@ -17,7 +17,7 @@ class GenerarOrdenPage extends StatelessWidget {
 
     final detalles = List<Map<String, dynamic>>.from(presupuesto['detalles'] ?? []);
 
-    String _fmt(dynamic v) {
+    String fmt(dynamic v) {
       try {
         if (v == null) return '-';
         final n = (v is num) ? v.toDouble() : double.parse(v.toString());
@@ -67,8 +67,8 @@ class GenerarOrdenPage extends StatelessWidget {
                   final lineTotal = d['total'] ?? d['subtotal'] ?? 0;
                   return ListTile(
                     title: Text('Item $item'),
-                    subtitle: Text('Cant: $cant  Precio: ${_fmt(price)}'),
-                    trailing: Text('${_fmt(lineTotal)}'),
+                    subtitle: Text('Cant: $cant  Precio: ${fmt(price)}'),
+                    trailing: Text(fmt(lineTotal)),
                   );
                 },
               ),
@@ -83,10 +83,10 @@ class GenerarOrdenPage extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Subtotal: ${_fmt(subtotal)}'),
-                      Text('IVA: ${_fmt(impuesto)}'),
-                      Text('Descuento: ${_fmt(descuento)}'),
-                      Text('Total: ${_fmt(total)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text('Subtotal: ${fmt(subtotal)}'),
+                      Text('IVA: ${fmt(impuesto)}'),
+                      Text('Descuento: ${fmt(descuento)}'),
+                      Text('Total: ${fmt(total)}', style: const TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                 ],
