@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../services/reconocimiento_service.dart';
 import 'package:image_picker/image_picker.dart';
+import 'orden_detail_page.dart';
 
 class ReconocimientoPage extends StatefulWidget {
   const ReconocimientoPage({super.key});
@@ -160,10 +161,11 @@ class _ReconocimientoPageState extends State<ReconocimientoPage> {
 
   /// 🔹 Navegar a detalles de orden
   void _navigateToOrden(int ordenId) {
-    Navigator.pushNamed(
+    Navigator.push(
       context,
-      '/orden-detalles',
-      arguments: ordenId,
+      MaterialPageRoute(
+        builder: (context) => OrdenDetailPage(ordenId: ordenId),
+      ),
     );
   }
 

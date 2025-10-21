@@ -13,7 +13,6 @@ import 'pages/vehiculos_page.dart';
 import 'pages/vehiculo_form_page.dart';
 import 'pages/vehiculo_detail_page.dart';
 import 'pages/reconocimiento_page.dart';
-import 'pages/orden_detalles_page.dart';
 import 'pages/ordenes_page.dart';
 import 'pages/crear_orden_page.dart';
 
@@ -90,7 +89,6 @@ class _MyAppState extends State<MyApp> {
         "/vehiculo-form": (context) => const VehiculoFormPage(),
         "/vehiculo-detalle": (context) => const VehiculoDetailPage(),
         "/reconocimiento": (context) => const ReconocimientoPage(),
-        "/orden-detalles": (context) => const OrdenDetallesPage(),
         "/ordenes": (context) => const OrdenesPage(),
         "/crear-orden": (context) => const CrearOrdenPage(),
       },
