@@ -21,6 +21,12 @@ class ClienteService {
     }
     throw Exception('Error fetching clientes: ${res.statusCode}');
   }
+
+  Future<Map<String, dynamic>> createCliente(Map<String, dynamic> body, {String? token}) async {
+    final uri = Uri.parse('$baseUrl/clientes/');
+    final res = await http.post(uri, headers: _headers(token: token), body: jsonEncode(body));
+    return {'status': res.statusCode, 'body': res.body};
+  }
 }
 
 
