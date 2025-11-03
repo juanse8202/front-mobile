@@ -250,6 +250,21 @@ class _PerfilPageState extends State<PerfilPage> {
                 Navigator.pushNamed(context, '/ordenes');
               },
             ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.teal.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.history, color: Colors.teal),
+              ),
+              title: const Text("Mis Órdenes"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/mis-ordenes');
+              },
+            ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Divider(color: Colors.grey),

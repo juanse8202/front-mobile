@@ -14,6 +14,7 @@ import 'pages/vehiculo_form_page.dart';
 import 'pages/vehiculo_detail_page.dart';
 import 'pages/ordenes_page.dart';
 import 'pages/crear_orden_page.dart';
+import 'pages/mis_ordenes_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,6 +90,7 @@ class _MyAppState extends State<MyApp> {
         "/vehiculo-detalle": (context) => const VehiculoDetailPage(),
         "/ordenes": (context) => const OrdenesPage(),
         "/crear-orden": (context) => const CrearOrdenPage(),
+        "/mis-ordenes": (context) => const MisOrdenesPage(),
       },
     );
   }
