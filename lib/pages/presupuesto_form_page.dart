@@ -373,7 +373,7 @@ class _PresupuestoFormPageState extends State<PresupuestoFormPage> {
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      value: _estado,
+                      initialValue: _estado,
                       decoration: const InputDecoration(
                         labelText: 'Estado',
                         border: OutlineInputBorder(),
@@ -447,7 +447,7 @@ class _PresupuestoFormPageState extends State<PresupuestoFormPage> {
                   // Información del Cliente
                   _buildSection('Información del Cliente', [
                     DropdownButtonFormField<String>(
-                      value: _clienteId,
+                      initialValue: _clienteId,
                       decoration: const InputDecoration(
                         labelText: 'Cliente *',
                         border: OutlineInputBorder(),
@@ -462,7 +462,7 @@ class _PresupuestoFormPageState extends State<PresupuestoFormPage> {
                             value: c['id'].toString(),
                             child: Text('${c['nombre']} ${c['apellido']}'),
                           );
-                        }).toList(),
+                        }),
                       ],
                       onChanged: (v) {
                         setState(() {
@@ -475,7 +475,7 @@ class _PresupuestoFormPageState extends State<PresupuestoFormPage> {
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      value: _vehiculoId,
+                      initialValue: _vehiculoId,
                       decoration: const InputDecoration(
                         labelText: 'Vehículo (opcional)',
                         border: OutlineInputBorder(),
@@ -498,7 +498,7 @@ class _PresupuestoFormPageState extends State<PresupuestoFormPage> {
                             value: v['id'].toString(),
                             child: Text('$marca $modelo - $placa'),
                           );
-                        }).toList(),
+                        }),
                       ],
                       onChanged: (v) {
                         setState(() {
@@ -558,7 +558,7 @@ class _PresupuestoFormPageState extends State<PresupuestoFormPage> {
                               ),
                               const SizedBox(height: 8),
                               DropdownButtonFormField<String>(
-                                value: detalle['item'],
+                                initialValue: detalle['item'],
                                 decoration: const InputDecoration(
                                   labelText: 'Seleccionar Item *',
                                   border: OutlineInputBorder(),
@@ -573,7 +573,7 @@ class _PresupuestoFormPageState extends State<PresupuestoFormPage> {
                                       value: item['id'].toString(),
                                       child: Text(item['nombre']),
                                     );
-                                  }).toList(),
+                                  }),
                                 ],
                                 onChanged: (v) => _onItemChanged(index, v),
                               ),
@@ -639,7 +639,7 @@ class _PresupuestoFormPageState extends State<PresupuestoFormPage> {
                           ),
                         ),
                       );
-                    }).toList(),
+                    }),
                     ElevatedButton.icon(
                       onPressed: _addDetalle,
                       icon: const Icon(Icons.add),

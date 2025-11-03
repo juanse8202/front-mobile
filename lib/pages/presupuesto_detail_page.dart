@@ -43,10 +43,10 @@ class _PresupuestoDetailPageState extends State<PresupuestoDetailPage> {
   // No fetch: mostrar datos pasados desde la lista (modo local)
 
   Future<void> _showAddDetalle() async {
-  final _item = TextEditingController();
-  final _cant = TextEditingController();
-  final _precio = TextEditingController();
-  final _descuento = TextEditingController();
+  final item = TextEditingController();
+  final cant = TextEditingController();
+  final precio = TextEditingController();
+  final descuento = TextEditingController();
 
     final res = await showDialog<bool>(
       context: context,
@@ -67,7 +67,7 @@ class _PresupuestoDetailPageState extends State<PresupuestoDetailPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               CustomTextField(
-                controller: _item,
+                controller: item,
                 label: 'Item id',
                 prefixIcon: Icons.list_alt,
                 filled: true,
@@ -76,7 +76,7 @@ class _PresupuestoDetailPageState extends State<PresupuestoDetailPage> {
               ),
               const SizedBox(height: 8),
               CustomTextField(
-                controller: _cant,
+                controller: cant,
                 label: 'Cantidad',
                 prefixIcon: Icons.grid_3x3,
                 filled: true,
@@ -84,7 +84,7 @@ class _PresupuestoDetailPageState extends State<PresupuestoDetailPage> {
               ),
               const SizedBox(height: 8),
               CustomTextField(
-                controller: _precio,
+                controller: precio,
                 label: 'Precio unitario',
                 prefixIcon: Icons.attach_money,
                 filled: true,
@@ -92,7 +92,7 @@ class _PresupuestoDetailPageState extends State<PresupuestoDetailPage> {
               ),
               const SizedBox(height: 8),
               CustomTextField(
-                controller: _descuento,
+                controller: descuento,
                 label: 'Descuento (por detalle)',
                 prefixIcon: Icons.percent,
                 filled: true,
@@ -114,13 +114,13 @@ class _PresupuestoDetailPageState extends State<PresupuestoDetailPage> {
     );
 
     if (res == true) {
-      final qty = double.tryParse(_cant.text) ?? 1.0;
-      final price = double.tryParse(_precio.text) ?? 0.0;
-      final disc = double.tryParse(_descuento.text) ?? 0.0;
+      final qty = double.tryParse(cant.text) ?? 1.0;
+      final price = double.tryParse(precio.text) ?? 0.0;
+      final disc = double.tryParse(descuento.text) ?? 0.0;
 
       final newDetalle = {
         'id': (detalles.isNotEmpty ? detalles.map((d) => d['id'] as int).reduce((a, b) => a > b ? a : b) : 0) + 1,
-        'item': int.tryParse(_item.text) ?? 0,
+        'item': int.tryParse(item.text) ?? 0,
         'cantidad': qty,
         'precio_unitario': price,
         'descuento': disc,

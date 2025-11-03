@@ -239,6 +239,21 @@ class _PerfilPageState extends State<PerfilPage> {
               leading: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
+                  color: Colors.green.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.camera_alt, color: Colors.green),
+              ),
+              title: const Text("Reconocimiento de Placas"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/reconocimiento');
+              },
+            ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
                   color: Colors.deepPurple.shade50,
                   shape: BoxShape.circle,
                 ),

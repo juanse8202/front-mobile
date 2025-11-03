@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
       if (result['success']) {
         final access = result['data']['access'];
         // Debug: imprimir token en consola para verificar que llega correctamente
-        print('Login successful - access token: ${access}');
+        print('Login successful - access token: $access');
 
         // 🔹 GUARDAR TOKEN EN SECURE STORAGE
         await _storage.write(key: 'access_token', value: access);
