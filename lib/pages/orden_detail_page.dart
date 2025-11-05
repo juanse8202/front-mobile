@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import '../services/orden_trabajo_service.dart';
+import '../widgets/pagar_con_stripe.dart';
 
 class OrdenDetailPage extends StatefulWidget {
   final int ordenId;
@@ -55,6 +56,65 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> with SingleTickerProv
         _isLoading = false;
       });
     }
+  }
+
+  void _mostrarDialogoPagoStripe() {
+    if (_orden == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No hay información de la orden'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false, // No cerrar al tocar fuera
+      builder: (BuildContext context) {
+        return Material(
+          color: Colors.transparent,
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: PagarConStripe(
+                ordenTrabajoId: widget.ordenId,
+                monto: _parseDouble(_orden!['total']),
+                ordenNumero: _orden!['numero_orden']?.toString() ?? '#${widget.ordenId}',
+                onSuccess: (pagoData) {
+                  // Cerrar el diálogo
+                  Navigator.of(context).pop();
+                  
+                  // Mostrar mensaje de éxito
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('✅ Pago procesado exitosamente con Stripe'),
+                      backgroundColor: Colors.green,
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                  
+                  // Recargar los datos de la orden
+                  _loadOrdenDetail();
+                },
+                onCancel: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _cambiarEstado(String nuevoEstado) async {
@@ -344,6 +404,37 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> with SingleTickerProv
             ),
             const SizedBox(height: 12),
 
+            // Estado de pago
+            Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                decoration: BoxDecoration(
+                  color: (_orden?['pago'] ?? false) ? Colors.green : Colors.orange,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      (_orden?['pago'] ?? false) ? Icons.check_circle : Icons.pending,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Pago: ${(_orden?['pago'] ?? false) ? "Pagado" : "Pendiente"}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+
             // Botón para cambiar estado
             Center(
               child: ElevatedButton.icon(
@@ -496,6 +587,30 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> with SingleTickerProv
                 color: Colors.green,
               ),
             ]),
+
+            const SizedBox(height: 16),
+
+            // Botón de pago con Stripe
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => _mostrarDialogoPagoStripe(),
+                icon: const Icon(Icons.payment),
+                label: const Text(
+                  'Pagar con Stripe',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF635BFF), // Color oficial de Stripe
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  elevation: 2,
+                ),
+              ),
+            ),
           ],
         ),
       ),

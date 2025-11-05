@@ -7,6 +7,7 @@ class CustomTextField extends StatefulWidget {
   final IconData? prefixIcon;
   final bool filled;
   final Color? fillColor;
+  final TextInputType? keyboardType;
   final String? Function(String?)? validator;
 
   const CustomTextField({
@@ -17,6 +18,7 @@ class CustomTextField extends StatefulWidget {
     this.prefixIcon,
     this.filled = false,
     this.fillColor,
+    this.keyboardType,
     this.validator,
   });
 
@@ -36,6 +38,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return TextFormField(
       controller: widget.controller,
       style: inputStyle,
+      keyboardType: widget.keyboardType,
       decoration: InputDecoration(
         labelText: widget.label,
         labelStyle: labelStyle,

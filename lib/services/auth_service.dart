@@ -174,6 +174,11 @@ class AuthService {
     return resMe;
   }
 
+  // 🔹 Obtener información del usuario autenticado (role, permisos, etc.)
+  Future<Map<String, dynamic>> getMe(String token) async {
+    return await _get("auth/me/", token: token);
+  }
+
   // 🔹 Cambiar contraseña
   Future<Map<String, dynamic>> changePassword(
       String token, String oldPassword, String newPassword) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../services/orden_trabajo_service.dart';
+import '../widgets/pagar_con_stripe.dart';
 
 class MiOrdenDetailPage extends StatefulWidget {
   final int ordenId;
@@ -88,6 +89,62 @@ class _MiOrdenDetailPageState extends State<MiOrdenDetailPage> with SingleTicker
       default:
         return Colors.grey;
     }
+  }
+
+  void _mostrarDialogoPagoStripe() {
+    if (_orden == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No hay información de la orden'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Material(
+          color: Colors.transparent,
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: PagarConStripe(
+                ordenTrabajoId: widget.ordenId,
+                monto: _parseDouble(_orden!['total']),
+                ordenNumero: _orden!['numero_orden']?.toString() ?? '#${widget.ordenId}',
+                onSuccess: (pagoData) {
+                  Navigator.of(context).pop();
+                  
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('✅ Pago procesado exitosamente con Stripe'),
+                      backgroundColor: Colors.green,
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                  
+                  _loadOrdenDetail();
+                },
+                onCancel: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -193,6 +250,49 @@ class _MiOrdenDetailPageState extends State<MiOrdenDetailPage> with SingleTicker
             ),
           ),
           const SizedBox(height: 16),
+
+          // Estado de pago
+          Card(
+            elevation: 2,
+            color: (_orden?['pago'] ?? false) ? Colors.green[50] : Colors.orange[50],
+            child: ListTile(
+              leading: Icon(
+                (_orden?['pago'] ?? false) ? Icons.check_circle : Icons.pending,
+                color: (_orden?['pago'] ?? false) ? Colors.green : Colors.orange,
+              ),
+              title: const Text('Estado de Pago', style: TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text(
+                (_orden?['pago'] ?? false) ? 'Pagado' : 'Pendiente',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: (_orden?['pago'] ?? false) ? Colors.green[900] : Colors.orange[900],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Botón de pagar con Stripe (solo si está finalizada)
+          if (_orden?['estado'] == 'finalizada') ...[
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => _mostrarDialogoPagoStripe(),
+                icon: const Icon(Icons.credit_card),
+                label: const Text('Pagar con Stripe'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 3,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
 
           _buildSectionTitle('Cliente'),
           Card(
