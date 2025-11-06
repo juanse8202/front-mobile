@@ -39,6 +39,7 @@ import 'pages/areas_page.dart';
 import 'pages/proveedores_page.dart';
 import 'pages/reportes_page.dart';
 import 'pages/facturas_proveedor_page.dart';
+import 'pages/chatbot_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -142,6 +143,7 @@ class _MyAppState extends State<MyApp> {
         "/proveedores": (context) => const ProveedoresPage(),
         "/reportes": (context) => const ReportesPage(),
         "/facturas-proveedor": (context) => const FacturasProveedorPage(),
+        "/chatbot": (context) => const ChatbotPage(),
       },
     );
   }

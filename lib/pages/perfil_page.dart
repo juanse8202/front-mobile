@@ -433,6 +433,15 @@ class _PerfilPageState extends State<PerfilPage> {
                     },
                   ),
                   _buildMenuItem(
+                    icon: Icons.smart_toy,
+                    title: "Chatbot IA",
+                    color: Colors.blue,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/chatbot');
+                    },
+                  ),
+                  _buildMenuItem(
                     icon: Icons.history,
                     title: "Historial",
                     color: Colors.grey,
