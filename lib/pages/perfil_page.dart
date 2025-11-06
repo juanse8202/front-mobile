@@ -235,6 +235,21 @@ class _PerfilPageState extends State<PerfilPage> {
                 Navigator.pushNamed(context, '/vehiculos', arguments: {'token': token});
               },
             ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.purple.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.calendar_today, color: Colors.purple),
+              ),
+              title: const Text("Mis Citas"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/mis-citas', arguments: {'token': token});
+              },
+            ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Divider(color: Colors.grey),
