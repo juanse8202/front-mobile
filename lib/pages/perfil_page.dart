@@ -322,6 +322,55 @@ class _PerfilPageState extends State<PerfilPage> {
                 ],
               ),
             ],
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.receipt_long, color: Colors.orange),
+              ),
+              title: const Text("Presupuestos"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(
+                  context,
+                  '/presupuestos',
+                  arguments: {'token': token},
+                );
+              },
+            ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.directions_car, color: Colors.blue),
+              ),
+              title: const Text("Vehículos"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/vehiculos', arguments: token);
+              },
+            ),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.purple.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.calendar_today, color: Colors.purple),
+              ),
+              title: const Text("Mis Citas"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/mis-citas', arguments: {'token': token});
+              },
+            ),
 
             const Divider(height: 1, thickness: 1),
 
