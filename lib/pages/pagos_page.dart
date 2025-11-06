@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../services/pago_service.dart';
 import '../widgets/custom_text_field.dart';
+import 'pago_detalle_page.dart';
 
 class PagosPage extends StatefulWidget {
   const PagosPage({super.key});
@@ -303,13 +304,24 @@ class _PagosPageState extends State<PagosPage> {
                         final estado = pago['estado'] ?? 'pendiente';
                         final fecha = pago['fecha_pago'] ?? pago['created_at'] ?? 'N/A';
 
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          elevation: 3,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Container(
+                        return InkWell(
+                          onTap: () {
+                            // Navegar a la página de detalles pasando el pago completo
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => PagoDetallePage(pago: pago),
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(15),
+                          child: Card(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
                               gradient: LinearGradient(
@@ -406,7 +418,7 @@ class _PagosPageState extends State<PagosPage> {
                               ),
                             ),
                           ),
-                        );
+                        ));
                       },
                     ),
             ),

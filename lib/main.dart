@@ -16,7 +16,8 @@ import 'pages/reconocimiento_page.dart';
 import 'pages/ordenes_page.dart';
 import 'pages/crear_orden_page.dart';
 import 'pages/mis_ordenes_page.dart';
-import 'pages/citas_page.dart';
+import 'pages/citas_calendario_page.dart';
+import 'pages/clientes_page.dart';
 import 'pages/pagos_page.dart';
 import 'pages/pagos_orden_page.dart';
 import 'pages/items_page.dart';
@@ -117,7 +118,7 @@ class _MyAppState extends State<MyApp> {
         "/ordenes": (context) => const OrdenesPage(),
         "/crear-orden": (context) => const CrearOrdenPage(),
         "/mis-ordenes": (context) => const MisOrdenesPage(),
-        "/citas": (context) => const CitasPage(),
+        "/citas": (context) => const CitasCalendarioPage(),
         "/pagos": (context) => const PagosPage(),
         "/pagos-orden": (context) => const PagosOrdenPage(),
         "/items": (context) => const ItemsPage(),
@@ -129,7 +130,7 @@ class _MyAppState extends State<MyApp> {
         "/cargos": (context) => const CargosPage(),
         "/asistencias": (context) => const AsistenciasPage(),
         "/nominas": (context) => const NominasPage(),
-        "/clientes": (context) => const CitasPage(), // Reutilizamos por ahora
+        "/clientes": (context) => const ClientesPage(),
         "/asistente-virtual": (context) => const AsistenteVirtualPage(),
         "/historial": (context) => const HistorialPage(),
         "/inventario": (context) => const InventarioPage(),

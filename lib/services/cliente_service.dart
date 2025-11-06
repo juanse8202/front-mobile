@@ -27,6 +27,29 @@ class ClienteService {
     final res = await http.post(uri, headers: _headers(token: token), body: jsonEncode(body));
     return {'status': res.statusCode, 'body': res.body};
   }
+
+  Future<Map<String, dynamic>> updateCliente(int id, Map<String, dynamic> body, {String? token}) async {
+    final uri = Uri.parse('$baseUrl/clientes/$id/');
+    final res = await http.put(uri, headers: _headers(token: token), body: jsonEncode(body));
+    return {'status': res.statusCode, 'body': res.body};
+  }
+
+  Future<Map<String, dynamic>> deleteCliente(int id, {String? token}) async {
+    final uri = Uri.parse('$baseUrl/clientes/$id/');
+    final res = await http.delete(uri, headers: _headers(token: token));
+    return {'status': res.statusCode, 'body': res.body};
+  }
+
+  Future<dynamic> getCliente(int id, {String? token}) async {
+    final uri = Uri.parse('$baseUrl/clientes/$id/');
+    final res = await http.get(uri, headers: _headers(token: token));
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      return jsonDecode(res.body);
+    }
+    throw Exception('Error fetching cliente: ${res.statusCode}');
+  }
 }
+
+
 
 

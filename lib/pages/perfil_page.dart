@@ -225,19 +225,20 @@ class _PerfilPageState extends State<PerfilPage> {
             ),
             const SizedBox(height: 8),
 
-            // Dashboard
-            ListTile(
-              leading: const Icon(Icons.dashboard, color: Colors.white),
-              title: const Text("Dashboard", style: TextStyle(fontWeight: FontWeight.w500)),
-              onTap: () {
-                Navigator.pop(context);
-                // Navegar al dashboard si existe
-              },
-            ),
+            // Dashboard (solo para admin y empleado)
+            if (userRole != 'cliente') ...[
+              ListTile(
+                leading: const Icon(Icons.dashboard, color: Colors.white),
+                title: const Text("Dashboard", style: TextStyle(fontWeight: FontWeight.w500)),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Navegar al dashboard si existe
+                },
+              ),
+              const Divider(height: 1, thickness: 1),
+            ],
 
-            const Divider(height: 1, thickness: 1),
-
-            // Mis Órdenes (fuera de módulos)
+            // Mis Órdenes
             ListTile(
               leading: const Icon(Icons.assignment, color: Colors.white),
               title: const Text("Mis Órdenes", style: TextStyle(fontWeight: FontWeight.w500)),
@@ -324,168 +325,195 @@ class _PerfilPageState extends State<PerfilPage> {
 
             const Divider(height: 1, thickness: 1),
 
-            // Módulo: Clientes
-            _buildExpansionModule(
-              title: "Clientes",
-              icon: Icons.people,
-              children: [
-                _buildMenuItem(
-                  icon: Icons.person_outline,
-                  title: "Cliente",
-                  color: Colors.blue,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/clientes', arguments: {'token': token});
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.calendar_today,
-                  title: "Cita",
-                  color: Colors.amber,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/citas');
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.chat,
-                  title: "Asistente Virtual",
-                  color: Colors.green,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/asistente-virtual');
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.history,
-                  title: "Historial",
-                  color: Colors.grey,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/historial');
-                  },
-                ),
-              ],
-            ),
+            // CLIENTE: Solo mostrar Cita e Historial de Pagos
+            if (userRole == 'cliente') ...[
+              // Cita
+              ListTile(
+                leading: const Icon(Icons.calendar_today, color: Colors.white),
+                title: const Text("Cita", style: TextStyle(fontWeight: FontWeight.w500)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/citas');
+                },
+              ),
+              const Divider(height: 1, thickness: 1),
+              
+              // Historial de Pagos
+              ListTile(
+                leading: const Icon(Icons.payment, color: Colors.white),
+                title: const Text("Historial de Pagos", style: TextStyle(fontWeight: FontWeight.w500)),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/pagos');
+                },
+              ),
+            ],
 
-            const Divider(height: 1, thickness: 1),
+            // ADMIN Y EMPLEADO: Mostrar todos los módulos
+            if (userRole != 'cliente') ...[
+              // Módulo: Clientes
+              _buildExpansionModule(
+                title: "Clientes",
+                icon: Icons.people,
+                children: [
+                  _buildMenuItem(
+                    icon: Icons.person_outline,
+                    title: "Cliente",
+                    color: Colors.blue,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/clientes', arguments: {'token': token});
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.calendar_today,
+                    title: "Cita",
+                    color: Colors.amber,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/citas');
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.chat,
+                    title: "Asistente Virtual",
+                    color: Colors.green,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/asistente-virtual');
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.history,
+                    title: "Historial",
+                    color: Colors.grey,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/historial');
+                    },
+                  ),
+                ],
+              ),
 
-            // Módulo: Operaciones
-            _buildExpansionModule(
-              title: "Operaciones",
-              icon: Icons.settings,
-              children: [
-                _buildMenuItem(
-                  icon: Icons.receipt_long,
-                  title: "Presupuesto",
-                  color: Colors.orange,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/presupuestos', arguments: {'token': token});
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.assignment,
-                  title: "Orden de Trabajo",
-                  color: Colors.deepPurple,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/ordenes');
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.directions_car,
-                  title: "Vehículo",
-                  color: Colors.blue,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/vehiculos', arguments: {'token': token});
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.camera_alt,
-                  title: "Reconocimiento de Placas",
-                  color: Colors.green,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/reconocimiento');
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.inventory,
-                  title: "Inventario",
-                  color: Colors.brown,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/inventario');
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.miscellaneous_services,
-                  title: "Servicios",
-                  color: Colors.indigo,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/servicios');
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.local_shipping,
-                  title: "Proveedores",
-                  color: Colors.teal,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/proveedores');
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.category,
-                  title: "Área",
-                  color: Colors.cyan,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/areas');
-                  },
-                ),
-              ],
-            ),
+              const Divider(height: 1, thickness: 1),
 
-            const Divider(height: 1, thickness: 1),
+              // Módulo: Operaciones
+              _buildExpansionModule(
+                title: "Operaciones",
+                icon: Icons.settings,
+                children: [
+                  _buildMenuItem(
+                    icon: Icons.receipt_long,
+                    title: "Presupuesto",
+                    color: Colors.orange,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/presupuestos', arguments: {'token': token});
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.assignment,
+                    title: "Orden de Trabajo",
+                    color: Colors.deepPurple,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/ordenes');
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.directions_car,
+                    title: "Vehículo",
+                    color: Colors.blue,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/vehiculos', arguments: {'token': token});
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.camera_alt,
+                    title: "Reconocimiento de Placas",
+                    color: Colors.green,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/reconocimiento');
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.inventory,
+                    title: "Inventario",
+                    color: Colors.brown,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/inventario');
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.miscellaneous_services,
+                    title: "Servicios",
+                    color: Colors.indigo,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/servicios');
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.local_shipping,
+                    title: "Proveedores",
+                    color: Colors.teal,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/proveedores');
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.category,
+                    title: "Área",
+                    color: Colors.cyan,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/areas');
+                    },
+                  ),
+                ],
+              ),
 
-            // Módulo: Finanzas
-            _buildExpansionModule(
-              title: "Finanzas",
-              icon: Icons.account_balance_wallet,
-              children: [
-                _buildMenuItem(
-                  icon: Icons.payment,
-                  title: "Historial de Pagos",
-                  color: Colors.pink,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/pagos');
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.receipt,
-                  title: "Factura Proveedor",
-                  color: Colors.red,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/facturas-proveedor');
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.analytics,
-                  title: "Reportes",
-                  color: Colors.deepOrange,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/reportes');
-                  },
-                ),
-              ],
-            ),
+              const Divider(height: 1, thickness: 1),
+
+              // Módulo: Finanzas
+              _buildExpansionModule(
+                title: "Finanzas",
+                icon: Icons.account_balance_wallet,
+                children: [
+                  _buildMenuItem(
+                    icon: Icons.payment,
+                    title: "Historial de Pagos",
+                    color: Colors.pink,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/pagos');
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.receipt,
+                    title: "Factura Proveedor",
+                    color: Colors.red,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/facturas-proveedor');
+                    },
+                  ),
+                  _buildMenuItem(
+                    icon: Icons.analytics,
+                    title: "Reportes",
+                    color: Colors.deepOrange,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/reportes');
+                    },
+                  ),
+                ],
+              ),
+            ],
 
             const Divider(height: 1, thickness: 1),
 
