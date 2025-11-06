@@ -115,9 +115,7 @@ class _MyAppState extends State<MyApp> {
         "/vehiculos": (context) => const VehiculosPage(),
         "/vehiculo-form": (context) => const VehiculoFormPage(),
         "/vehiculo-detalle": (context) => const VehiculoDetailPage(),
-<<<<<<< HEAD
         "/mis-citas": (context) => const MisCitasPage(),
-=======
         "/reconocimiento": (context) => const ReconocimientoPage(),
         "/ordenes": (context) => const OrdenesPage(),
         "/crear-orden": (context) => const CrearOrdenPage(),
@@ -143,7 +141,6 @@ class _MyAppState extends State<MyApp> {
         "/proveedores": (context) => const ProveedoresPage(),
         "/reportes": (context) => const ReportesPage(),
         "/facturas-proveedor": (context) => const FacturasProveedorPage(),
->>>>>>> 30306e978f6867493307b0a96d480d93af18fc58
       },
     );
   }

@@ -320,6 +320,16 @@ class _PerfilPageState extends State<PerfilPage> {
                   ),
                 ],
               ),
+            ],
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.receipt_long, color: Colors.orange),
+              ),
               title: const Text("Presupuestos"),
               onTap: () {
                 Navigator.pop(context);
@@ -331,11 +341,18 @@ class _PerfilPageState extends State<PerfilPage> {
               },
             ),
             ListTile(
-              leading: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: Colors.blue.shade50, shape: BoxShape.circle), child: const Icon(Icons.directions_car, color: Colors.blue)),
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.directions_car, color: Colors.blue),
+              ),
               title: const Text("Vehículos"),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, '/vehiculos', arguments: {'token': token});
+                Navigator.pushNamed(context, '/vehiculos', arguments: token);
               },
             ),
             ListTile(
@@ -353,17 +370,6 @@ class _PerfilPageState extends State<PerfilPage> {
                 Navigator.pushNamed(context, '/mis-citas', arguments: {'token': token});
               },
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Divider(color: Colors.grey),
-            ),
-            ListTile(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  shape: BoxShape.circle,
-            ],
 
             const Divider(height: 1, thickness: 1),
 
