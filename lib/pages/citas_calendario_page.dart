@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../services/cita_service.dart';
 import '../services/cliente_service.dart';
 import '../services/vehiculo_service.dart';
@@ -23,6 +26,7 @@ class _CitasCalendarioPageState extends State<CitasCalendarioPage> {
   List<dynamic> citas = [];
   List<dynamic> clientes = [];
   List<dynamic> vehiculos = [];
+  List<dynamic> empleados = [];
   bool loading = true;
   String? token;
   
@@ -45,6 +49,7 @@ class _CitasCalendarioPageState extends State<CitasCalendarioPage> {
       _cargarCitas(),
       _cargarClientes(),
       _cargarVehiculos(),
+      _cargarEmpleados(),
     ]);
   }
 
@@ -95,6 +100,28 @@ class _CitasCalendarioPageState extends State<CitasCalendarioPage> {
       });
     } catch (e) {
       print('Error al cargar vehículos: $e');
+    }
+  }
+
+  Future<void> _cargarEmpleados() async {
+    try {
+      final url = Uri.parse('${dotenv.env['BASE_URL'] ?? 'http://192.168.0.3:8000/api'}/empleados/');
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          empleados = data is List ? data : [];
+        });
+      }
+    } catch (e) {
+      print('Error al cargar empleados: $e');
     }
   }
 
@@ -158,6 +185,33 @@ class _CitasCalendarioPageState extends State<CitasCalendarioPage> {
     String tipoCita = cita?['tipo_cita'] ?? 'reparacion';
     String estado = cita?['estado'] ?? 'pendiente';
     
+    // Lista de vehículos filtrados por cliente
+    List<dynamic> vehiculosDelCliente = [];
+    
+    // Función para cargar vehículos del cliente seleccionado
+    Future<void> cargarVehiculosDelCliente(int? clienteId) async {
+      if (clienteId == null) {
+        vehiculosDelCliente = [];
+        return;
+      }
+      
+      try {
+        final vehiculosResult = await _vehiculoService.fetchAll(
+          token: token,
+          clienteId: clienteId,
+        );
+        vehiculosDelCliente = vehiculosResult;
+      } catch (e) {
+        print('Error al cargar vehículos del cliente: $e');
+        vehiculosDelCliente = [];
+      }
+    }
+    
+    // Cargar vehículos del cliente si hay uno seleccionado
+    if (clienteSeleccionado != null) {
+      await cargarVehiculosDelCliente(clienteSeleccionado);
+    }
+    
     final fechaController = TextEditingController(
       text: cita != null && cita['fecha_hora_inicio'] != null
           ? DateFormat('dd/MM/yyyy').format(DateTime.parse(cita['fecha_hora_inicio']))
@@ -202,41 +256,81 @@ class _CitasCalendarioPageState extends State<CitasCalendarioPage> {
                       child: Text(nombre),
                     );
                   }).toList(),
-                  onChanged: (value) {
+                  onChanged: (value) async {
+                    // Cargar vehículos del nuevo cliente seleccionado
+                    await cargarVehiculosDelCliente(value);
+                    
                     setDialogState(() {
                       clienteSeleccionado = value;
+                      // Limpiar vehículo seleccionado si no pertenece al nuevo cliente
+                      if (vehiculoSeleccionado != null) {
+                        final existeVehiculo = vehiculosDelCliente.any(
+                          (v) => v['id'] == vehiculoSeleccionado
+                        );
+                        if (!existeVehiculo) {
+                          vehiculoSeleccionado = null;
+                        }
+                      }
                     });
                   },
                 ),
                 const SizedBox(height: 12),
                 
-                // Vehículo
+                // Vehículo - Mostrar solo vehículos del cliente seleccionado
                 DropdownButtonFormField<int?>(
                   value: vehiculoSeleccionado,
-                  decoration: const InputDecoration(
-                    labelText: 'Vehículo (Opcional)',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.directions_car),
+                  decoration: InputDecoration(
+                    labelText: clienteSeleccionado == null 
+                      ? 'Primero seleccione un cliente'
+                      : 'Vehículo (Opcional)',
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.directions_car),
+                    helperText: clienteSeleccionado != null && vehiculosDelCliente.isEmpty
+                      ? 'Este cliente no tiene vehículos registrados'
+                      : null,
                   ),
-                  items: [
-                    const DropdownMenuItem(
-                      value: null,
-                      child: Text('Sin vehículo'),
-                    ),
-                    ...vehiculos.map((vehiculo) {
-                      final placa = vehiculo['placa'] ?? 'Sin placa';
-                      final marca = vehiculo['marca'] ?? '';
-                      return DropdownMenuItem(
-                        value: vehiculo['id'],
-                        child: Text('$placa - $marca'),
-                      );
-                    }),
-                  ],
-                  onChanged: (value) {
-                    setDialogState(() {
-                      vehiculoSeleccionado = value;
-                    });
-                  },
+                  items: clienteSeleccionado == null
+                    ? [
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('Seleccione un cliente primero'),
+                        ),
+                      ]
+                    : [
+                        DropdownMenuItem(
+                          value: null,
+                          child: Text(vehiculosDelCliente.isEmpty 
+                            ? 'Sin vehículos disponibles' 
+                            : 'Sin vehículo'
+                          ),
+                        ),
+                        ...vehiculosDelCliente.map((vehiculo) {
+                          final placa = vehiculo['numero_placa'] ?? vehiculo['placa'] ?? 'Sin placa';
+                          final marcaNombre = vehiculo['marca_nombre'] ?? '';
+                          final modeloNombre = vehiculo['modelo_nombre'] ?? '';
+                          
+                          // Construir texto del vehículo
+                          String vehiculoTexto = placa;
+                          if (marcaNombre.isNotEmpty) {
+                            vehiculoTexto += ' - $marcaNombre';
+                            if (modeloNombre.isNotEmpty) {
+                              vehiculoTexto += ' $modeloNombre';
+                            }
+                          }
+                          
+                          return DropdownMenuItem(
+                            value: vehiculo['id'],
+                            child: Text(vehiculoTexto),
+                          );
+                        }),
+                      ],
+                  onChanged: clienteSeleccionado == null 
+                    ? null 
+                    : (value) {
+                        setDialogState(() {
+                          vehiculoSeleccionado = value;
+                        });
+                      },
                 ),
                 const SizedBox(height: 12),
                 
@@ -420,6 +514,8 @@ class _CitasCalendarioPageState extends State<CitasCalendarioPage> {
                     int.parse(horaFinParts[1]),
                   );
 
+                  // NO incluir el campo 'empleado' para que el backend lo asigne automáticamente
+                  // basándose en el usuario autenticado (empleado que crea la cita)
                   final body = {
                     'cliente': clienteSeleccionado,
                     'vehiculo': vehiculoSeleccionado,

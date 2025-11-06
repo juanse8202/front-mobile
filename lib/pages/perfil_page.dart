@@ -374,19 +374,9 @@ class _PerfilPageState extends State<PerfilPage> {
 
             const Divider(height: 1, thickness: 1),
 
-            // CLIENTE: Solo mostrar Cita e Historial de Pagos
+            // CLIENTE: Solo mostrar Historial de Pagos
+            // (Mis Citas ya está disponible más arriba para todos los usuarios)
             if (userRole == 'cliente') ...[
-              // Cita
-              ListTile(
-                leading: const Icon(Icons.calendar_today, color: Colors.white),
-                title: const Text("Cita", style: TextStyle(fontWeight: FontWeight.w500)),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, '/citas');
-                },
-              ),
-              const Divider(height: 1, thickness: 1),
-              
               // Historial de Pagos
               ListTile(
                 leading: const Icon(Icons.payment, color: Colors.white),
