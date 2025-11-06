@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
       if (result['success']) {
         final access = result['data']['access'];
         // Debug: imprimir token en consola para verificar que llega correctamente
-        print('Login successful - access token: ${access}');
+        print('Login successful - access token: $access');
 
         // 🔹 GUARDAR TOKEN EN SECURE STORAGE
         await _storage.write(key: 'access_token', value: access);
@@ -46,6 +46,39 @@ class _LoginPageState extends State<LoginPage> {
           );
         }
         print('Token guardado en secure storage');
+
+        // 🔹 OBTENER ROL DEL USUARIO
+        try {
+          final meResult = await _authService.getMe(access);
+          if (meResult['success']) {
+            final roleData = meResult['data'];
+            print('Datos de usuario: $roleData');
+            
+            // Obtener el rol del usuario
+            String? userRole;
+            if (roleData['role'] != null) {
+              userRole = roleData['role'].toString().toLowerCase();
+            } else if (roleData['groups'] != null && roleData['groups'] is List && (roleData['groups'] as List).isNotEmpty) {
+              userRole = roleData['groups'][0].toString().toLowerCase();
+            } else if (roleData['is_staff'] == true || roleData['is_superuser'] == true) {
+              userRole = 'administrador';
+            } else {
+              userRole = 'cliente';
+            }
+            
+            // Guardar rol en secure storage
+            await _storage.write(key: 'user_role', value: userRole);
+            print('Rol de usuario guardado: $userRole');
+          } else {
+            // Si no se puede obtener el rol, asumir cliente
+            await _storage.write(key: 'user_role', value: 'cliente');
+            print('No se pudo obtener rol, asignando "cliente" por defecto');
+          }
+        } catch (e) {
+          print('Error al obtener rol: $e');
+          // Si hay error, asumir cliente
+          await _storage.write(key: 'user_role', value: 'cliente');
+        }
 
         Navigator.pushReplacementNamed(context, "/perfil", arguments: access);
       } else {

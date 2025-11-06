@@ -159,7 +159,7 @@ class _VehiculosPageState extends State<VehiculosPage> {
                                       style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                     subtitle: Text(
-                                      '${marca} ${modelo}'.trim() + 
+                                      '$marca $modelo'.trim() + 
                                       (anio.isNotEmpty ? ' • $anio' : '') + 
                                       (color.isNotEmpty ? ' • $color' : '') + 
                                       (cliente.isNotEmpty ? ' • $cliente' : ''),

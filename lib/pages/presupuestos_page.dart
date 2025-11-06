@@ -361,7 +361,7 @@ class _PresupuestosPageState extends State<PresupuestosPage> {
                     child: Column(
                       children: [
                         DropdownButtonFormField<String>(
-                          value: selectedEstado.isEmpty ? null : selectedEstado,
+                          initialValue: selectedEstado.isEmpty ? null : selectedEstado,
                           decoration: const InputDecoration(
                             labelText: 'Estado',
                             border: OutlineInputBorder(),

@@ -170,7 +170,7 @@ class _VehiculoFormPageState extends State<VehiculoFormPage> {
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<int>(
-                      value: clienteId,
+                      initialValue: clienteId,
                       items: [
                         for (final c in clientes)
                           DropdownMenuItem<int>(
@@ -192,7 +192,7 @@ class _VehiculoFormPageState extends State<VehiculoFormPage> {
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<int>(
-                            value: marcaId,
+                            initialValue: marcaId,
                             items: [
                               for (final m in marcas)
                                 DropdownMenuItem<int>(value: m['id'] as int, child: Text(m['nombre'] ?? '-')),
@@ -211,7 +211,7 @@ class _VehiculoFormPageState extends State<VehiculoFormPage> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: DropdownButtonFormField<int>(
-                            value: modeloId,
+                            initialValue: modeloId,
                             items: loadingModelos
                                 ? const []
                                 : [
@@ -264,7 +264,7 @@ class _VehiculoFormPageState extends State<VehiculoFormPage> {
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<String>(
-                            value: tipoCtrl.text.isEmpty ? null : tipoCtrl.text,
+                            initialValue: tipoCtrl.text.isEmpty ? null : tipoCtrl.text,
                             items: const [
                               DropdownMenuItem(value: 'CAMIONETA', child: Text('Camioneta')),
                               DropdownMenuItem(value: 'DEPORTIVO', child: Text('Deportivo')),
@@ -294,7 +294,7 @@ class _VehiculoFormPageState extends State<VehiculoFormPage> {
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      value: combustibleCtrl.text.isEmpty ? null : combustibleCtrl.text,
+                      initialValue: combustibleCtrl.text.isEmpty ? null : combustibleCtrl.text,
                       items: const [
                         DropdownMenuItem(value: 'Gasolina', child: Text('Gasolina')),
                         DropdownMenuItem(value: 'Diésel', child: Text('Diésel')),
