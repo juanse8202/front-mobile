@@ -159,19 +159,45 @@ class AuthService {
     });
   }
 
-  // 🔹 Obtener perfil
+  // 🔹 Obtener perfil - Solo llama al endpoint correcto basado en el rol
   Future<Map<String, dynamic>> getProfile(String token) async {
-    // El backend expone endpoints: 'cliente/profile/' y 'empleado/profile/' bajo /api/
-    // Intentamos primero cliente, y si falla intentamos empleado.
-    final resCliente = await _get("cliente/profile/", token: token);
-    if (resCliente['success']) return resCliente;
-
-    final resEmpleado = await _get("empleado/profile/", token: token);
-    if (resEmpleado['success']) return resEmpleado;
-
-    // Como último recurso, intentar el endpoint genérico que devuelve user info
-    final resMe = await _get("auth/me/", token: token);
-    return resMe;
+    // Primero obtener el rol del usuario desde /api/auth/me/
+    final meResult = await getMe(token);
+    
+    if (!meResult['success'] || meResult['data'] == null) {
+      // Si no se puede obtener el rol, usar el endpoint genérico
+      return meResult;
+    }
+    
+    final roleData = meResult['data'];
+    String? role;
+    
+    // Obtener el rol del usuario
+    if (roleData['role'] != null) {
+      role = roleData['role'].toString().toLowerCase();
+    } else if (roleData['groups'] != null && roleData['groups'] is List && (roleData['groups'] as List).isNotEmpty) {
+      role = roleData['groups'][0].toString().toLowerCase();
+    } else if (roleData['is_staff'] == true || roleData['is_superuser'] == true) {
+      role = 'administrador';
+    } else {
+      role = 'cliente';
+    }
+    
+    // Llamar solo al endpoint correcto basado en el rol
+    if (role == 'empleado') {
+      return await _get("empleado/profile/", token: token);
+    } else if (role == 'cliente') {
+      return await _get("cliente/profile/", token: token);
+    } else if (role == 'admin' || role == 'administrador') {
+      // Admin puede tener perfil de empleado o no tener perfil específico
+      // Intentar empleado primero, si falla usar auth/me
+      final resEmpleado = await _get("empleado/profile/", token: token);
+      if (resEmpleado['success']) return resEmpleado;
+      return meResult; // Devolver datos de auth/me si no tiene perfil de empleado
+    } else {
+      // Si no se puede determinar, usar auth/me
+      return meResult;
+    }
   }
 
   // 🔹 Obtener información del usuario autenticado (role, permisos, etc.)

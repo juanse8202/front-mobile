@@ -32,6 +32,7 @@ import 'pages/usuarios_page.dart';
 import 'pages/empleados_page.dart';
 import 'pages/cargos_page.dart';
 import 'pages/asistencias_page.dart';
+import 'pages/mi_asistencia_page.dart';
 import 'pages/nominas_page.dart';
 import 'pages/asistente_virtual_page.dart';
 import 'pages/historial_page.dart';
@@ -137,6 +138,7 @@ class _MyAppState extends State<MyApp> {
         "/empleados": (context) => const EmpleadosPage(),
         "/cargos": (context) => const CargosPage(),
         "/asistencias": (context) => const AsistenciasPage(),
+        "/mi-asistencia": (context) => const MiAsistenciaPage(),
         "/nominas": (context) => const NominasPage(),
         "/clientes": (context) => const ClientesPage(),
         "/asistente-virtual": (context) => const AsistenteVirtualPage(),
