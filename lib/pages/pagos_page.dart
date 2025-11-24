@@ -41,7 +41,12 @@ class _PagosPageState extends State<PagosPage> {
     
     if (result['success']) {
       setState(() {
-        _pagos = result['data'] is List ? result['data'] : [];
+        // Filtrar solo los pagos completados
+        final todosPagos = result['data'] is List ? result['data'] : [];
+        _pagos = todosPagos.where((pago) {
+          final estado = pago['estado']?.toString().toLowerCase() ?? '';
+          return estado == 'completado' || estado == 'succeeded';
+        }).toList();
       });
     } else {
       if (mounted) {

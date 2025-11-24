@@ -58,7 +58,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> with SingleTickerProv
     }
   }
 
-  void _mostrarDialogoPagoStripe() {
+  void _mostrarDialogoPagoStripe() async {
     if (_orden == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -68,6 +68,9 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> with SingleTickerProv
       );
       return;
     }
+
+    // Obtener el token antes de mostrar el diálogo
+    final token = await _storage.read(key: 'access_token');
 
     showDialog(
       context: context,
@@ -90,6 +93,7 @@ class _OrdenDetailPageState extends State<OrdenDetailPage> with SingleTickerProv
                 ordenTrabajoId: widget.ordenId,
                 monto: _parseDouble(_orden!['total']),
                 ordenNumero: _orden!['numero_orden']?.toString() ?? '#${widget.ordenId}',
+                token: token,
                 onSuccess: (pagoData) {
                   // Cerrar el diálogo
                   Navigator.of(context).pop();

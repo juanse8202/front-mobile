@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../services/export_service.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file/open_file.dart';
 
 class PagoDetallePage extends StatefulWidget {
   final Map<String, dynamic> pago;
@@ -10,6 +14,8 @@ class PagoDetallePage extends StatefulWidget {
 }
 
 class _PagoDetallePageState extends State<PagoDetallePage> {
+  bool _isDownloadingPDF = false;
+  bool _isDownloadingExcel = false;
 
   String _getMetodoIcon(String metodo) {
     switch (metodo.toLowerCase()) {
@@ -46,6 +52,112 @@ class _PagoDetallePageState extends State<PagoDetallePage> {
         ],
       ),
     );
+  }
+
+  Future<void> _descargarPDF() async {
+    setState(() => _isDownloadingPDF = true);
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Generando PDF...')),
+    );
+
+    try {
+      final pagoId = widget.pago['id'];
+      final bytes = await ExportService.descargarPagoPDF(pagoId);
+
+      if (!mounted) return;
+
+      // Usar directorio de la aplicación
+      final directory = await getApplicationDocumentsDirectory();
+      final fileName = 'pago_$pagoId.pdf';
+      final file = File('${directory.path}/$fileName');
+      await file.writeAsBytes(bytes);
+
+      setState(() => _isDownloadingPDF = false);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('✅ PDF guardado correctamente'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 5),
+          action: SnackBarAction(
+            label: 'ABRIR',
+            textColor: Colors.white,
+            onPressed: () {
+              OpenFile.open(file.path);
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      setState(() => _isDownloadingPDF = false);
+      
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌ Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _descargarExcel() async {
+    setState(() => _isDownloadingExcel = true);
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Generando Excel...')),
+    );
+
+    try {
+      final pagoId = widget.pago['id'];
+      final bytes = await ExportService.descargarPagoExcel(pagoId);
+
+      if (!mounted) return;
+
+      // Usar directorio de la aplicación
+      final directory = await getApplicationDocumentsDirectory();
+      final fileName = 'pago_$pagoId.xlsx';
+      final file = File('${directory.path}/$fileName');
+      await file.writeAsBytes(bytes);
+
+      setState(() => _isDownloadingExcel = false);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('✅ Excel guardado correctamente'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 5),
+          action: SnackBarAction(
+            label: 'ABRIR',
+            textColor: Colors.white,
+            onPressed: () {
+              OpenFile.open(file.path);
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      setState(() => _isDownloadingExcel = false);
+      
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌ Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -119,6 +231,59 @@ class _PagoDetallePageState extends State<PagoDetallePage> {
                   ],
                 ),
               ),
+            ),
+            const SizedBox(height: 20),
+            // Botones de descarga
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _isDownloadingPDF ? null : _descargarPDF,
+                    icon: _isDownloadingPDF
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(Icons.picture_as_pdf, color: Colors.white),
+                    label: const Text('Descargar PDF', style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _isDownloadingExcel ? null : _descargarExcel,
+                    icon: _isDownloadingExcel
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(Icons.table_chart, color: Colors.white),
+                    label: const Text('Descargar Excel', style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

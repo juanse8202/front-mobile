@@ -353,7 +353,12 @@ class _PerfilPageState extends State<PerfilPage> {
               title: const Text("Vehículos"),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, '/vehiculos', arguments: token);
+                // Navegar a la página correcta según el rol
+                if (userRole == 'cliente') {
+                  Navigator.pushNamed(context, '/mis-vehiculos');
+                } else {
+                  Navigator.pushNamed(context, '/vehiculos', arguments: token);
+                }
               },
             ),
             ListTile(
@@ -474,7 +479,12 @@ class _PerfilPageState extends State<PerfilPage> {
                     color: Colors.blue,
                     onTap: () {
                       Navigator.pop(context);
-                      Navigator.pushNamed(context, '/vehiculos', arguments: {'token': token});
+                      // Navegar a la página correcta según el rol
+                      if (userRole == 'cliente') {
+                        Navigator.pushNamed(context, '/mis-vehiculos');
+                      } else {
+                        Navigator.pushNamed(context, '/vehiculos', arguments: {'token': token});
+                      }
                     },
                   ),
                   _buildMenuItem(
@@ -621,6 +631,20 @@ class _PerfilPageState extends State<PerfilPage> {
                 ],
               ),
       ),
+      // Botón flotante del chatbot solo para clientes
+      floatingActionButton: userRole == 'cliente'
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.pushNamed(context, '/chatbot');
+              },
+              backgroundColor: const Color(0xFF5E35B1),
+              icon: const Icon(Icons.chat_bubble, color: Colors.white),
+              label: const Text(
+                'Asistente',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            )
+          : null,
     );
   }
 }

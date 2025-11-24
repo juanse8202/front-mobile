@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../api/presupuestos_api.dart';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file/open_file.dart';
 
 class PresupuestoDetallePage extends StatefulWidget {
   const PresupuestoDetallePage({super.key});
@@ -127,13 +129,8 @@ class _PresupuestoDetallePageState extends State<PresupuestoDetallePage>
 
       if (!mounted) return;
 
-      // Guardar directamente en Downloads (no requiere permisos en Android 10+)
-      final directory = Directory('/storage/emulated/0/Download');
-      
-      if (!directory.existsSync()) {
-        directory.createSync(recursive: true);
-      }
-
+      // Usar directorio de la aplicación
+      final directory = await getApplicationDocumentsDirectory();
       final fileName = 'presupuesto_$_presupuestoId.pdf';
       final file = File('${directory.path}/$fileName');
       await file.writeAsBytes(bytes);
@@ -142,13 +139,15 @@ class _PresupuestoDetallePageState extends State<PresupuestoDetallePage>
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('✅ PDF guardado en Download/$fileName'),
+          content: Text('✅ PDF guardado correctamente'),
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 5),
           action: SnackBarAction(
-            label: 'OK',
+            label: 'ABRIR',
             textColor: Colors.white,
-            onPressed: () {},
+            onPressed: () {
+              OpenFile.open(file.path);
+            },
           ),
         ),
       );
@@ -176,13 +175,8 @@ class _PresupuestoDetallePageState extends State<PresupuestoDetallePage>
 
       if (!mounted) return;
 
-      // Guardar directamente en Downloads (no requiere permisos en Android 10+)
-      final directory = Directory('/storage/emulated/0/Download');
-      
-      if (!directory.existsSync()) {
-        directory.createSync(recursive: true);
-      }
-
+      // Usar directorio de la aplicación
+      final directory = await getApplicationDocumentsDirectory();
       final fileName = 'presupuesto_$_presupuestoId.xlsx';
       final file = File('${directory.path}/$fileName');
       await file.writeAsBytes(bytes);
@@ -191,13 +185,15 @@ class _PresupuestoDetallePageState extends State<PresupuestoDetallePage>
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('✅ Excel guardado en Download/$fileName'),
+          content: Text('✅ Excel guardado correctamente'),
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 5),
           action: SnackBarAction(
-            label: 'OK',
+            label: 'ABRIR',
             textColor: Colors.white,
-            onPressed: () {},
+            onPressed: () {
+              OpenFile.open(file.path);
+            },
           ),
         ),
       );

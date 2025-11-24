@@ -4,9 +4,7 @@ import '../services/orden_trabajo_service.dart';
 import '../widgets/pagar_con_stripe.dart';
 
 class MiOrdenDetailPage extends StatefulWidget {
-  final int ordenId;
-
-  const MiOrdenDetailPage({super.key, required this.ordenId});
+  const MiOrdenDetailPage({super.key});
 
   @override
   State<MiOrdenDetailPage> createState() => _MiOrdenDetailPageState();
@@ -19,6 +17,7 @@ class _MiOrdenDetailPageState extends State<MiOrdenDetailPage> with SingleTicker
   Map<String, dynamic>? _orden;
   bool _isLoading = true;
   String? _error;
+  int? _ordenId;
   
   late TabController _tabController;
 
@@ -26,7 +25,26 @@ class _MiOrdenDetailPageState extends State<MiOrdenDetailPage> with SingleTicker
   void initState() {
     super.initState();
     _tabController = TabController(length: 7, vsync: this);
-    _loadOrdenDetail();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    // Obtener ordenId de los argumentos de la ruta
+    if (_ordenId == null) {
+      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      _ordenId = args?['ordenId'] as int?;
+      
+      if (_ordenId != null) {
+        _loadOrdenDetail();
+      } else {
+        setState(() {
+          _error = 'ID de orden no proporcionado';
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -43,7 +61,7 @@ class _MiOrdenDetailPageState extends State<MiOrdenDetailPage> with SingleTicker
 
     try {
       final token = await _storage.read(key: 'access_token');
-      final orden = await _ordenService.fetchById(widget.ordenId, token: token);
+      final orden = await _ordenService.fetchById(_ordenId!, token: token);
       
       setState(() {
         _orden = orden;
@@ -91,7 +109,7 @@ class _MiOrdenDetailPageState extends State<MiOrdenDetailPage> with SingleTicker
     }
   }
 
-  void _mostrarDialogoPagoStripe() {
+  void _mostrarDialogoPagoStripe() async {
     if (_orden == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -101,6 +119,9 @@ class _MiOrdenDetailPageState extends State<MiOrdenDetailPage> with SingleTicker
       );
       return;
     }
+
+    // Obtener el token antes de mostrar el diálogo
+    final token = await _storage.read(key: 'access_token');
 
     showDialog(
       context: context,
@@ -120,9 +141,10 @@ class _MiOrdenDetailPageState extends State<MiOrdenDetailPage> with SingleTicker
                 borderRadius: BorderRadius.circular(16),
               ),
               child: PagarConStripe(
-                ordenTrabajoId: widget.ordenId,
+                ordenTrabajoId: _ordenId!,
                 monto: _parseDouble(_orden!['total']),
-                ordenNumero: _orden!['numero_orden']?.toString() ?? '#${widget.ordenId}',
+                ordenNumero: _orden!['numero_orden']?.toString() ?? '#$_ordenId',
+                token: token,
                 onSuccess: (pagoData) {
                   Navigator.of(context).pop();
                   
@@ -151,7 +173,7 @@ class _MiOrdenDetailPageState extends State<MiOrdenDetailPage> with SingleTicker
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Orden #${widget.ordenId}'),
+        title: Text('Orden #$_ordenId'),
         backgroundColor: Colors.deepPurple,
         actions: [
           IconButton(

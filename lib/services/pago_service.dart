@@ -63,11 +63,26 @@ class PagoService {
       int ordenId, {String? token}) async {
     try {
       final url = Uri.parse('$baseUrl/pagos/create-payment-intent/');
+      
+      // Debug: mostrar información del token
+      print('🔑 Token recibido: ${token != null ? "Sí (longitud: ${token.length})" : "No"}');
+      if (token != null) {
+        print('🔑 Primeros 20 caracteres: ${token.length > 20 ? token.substring(0, 20) : token}...');
+      }
+      
+      final headers = _headers(token: token);
+      print('📤 Headers: $headers');
+      print('📤 URL: $url');
+      print('📤 Body: ${jsonEncode({'orden_trabajo_id': ordenId})}');
+      
       final response = await http.post(
         url,
-        headers: _headers(token: token),
+        headers: headers,
         body: jsonEncode({'orden_trabajo_id': ordenId}),
       );
+
+      print('📥 Response status: ${response.statusCode}');
+      print('📥 Response body: ${response.body}');
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final data = jsonDecode(response.body);
@@ -82,6 +97,7 @@ class PagoService {
         };
       }
     } catch (e) {
+      print('❌ Excepción en iniciarPagoStripe: $e');
       return {'success': false, 'message': 'Error de conexión: $e'};
     }
   }

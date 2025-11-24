@@ -294,11 +294,10 @@ class _MisOrdenesPageState extends State<MisOrdenesPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () {
-          Navigator.push(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(
-              builder: (context) => MiOrdenDetailPage(ordenId: ordenId),
-            ),
+            '/mi-orden-detail',
+            arguments: {'ordenId': ordenId},
           ).then((_) => _loadMisOrdenes());
         },
         borderRadius: BorderRadius.circular(12),

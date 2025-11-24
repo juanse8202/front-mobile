@@ -74,6 +74,15 @@ class VehiculoService {
     }
     throw Exception('Error fetching modelos');
   }
-}
 
+  // Obtener mis vehículos (cliente autenticado)
+  Future<List<dynamic>> fetchMisVehiculos({String? token}) async {
+    final uri = Uri.parse('$baseUrl/vehiculos/mis-vehiculos/');
+    final res = await http.get(uri, headers: _headers(token: token));
+    if (res.statusCode >= 200 && res.statusCode < 300) {
+      return jsonDecode(res.body) as List<dynamic>;
+    }
+    throw Exception('Error fetching mis vehículos: ${res.statusCode} ${res.body}');
+  }
+}
 
