@@ -292,15 +292,17 @@ class _PerfilPageState extends State<PerfilPage> {
                       Navigator.pushNamed(context, "/cargos", arguments: token);
                     },
                   ),
-                  _buildMenuItem(
-                    icon: Icons.check_circle,
-                    title: "Asistencia",
-                    color: Colors.green,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, "/asistencias", arguments: token);
-                    },
-                  ),
+                  // Asistencia - Solo para admin (reporte)
+                  if (userRole == 'admin' || userRole == 'administrador')
+                    _buildMenuItem(
+                      icon: Icons.check_circle,
+                      title: "Asistencia",
+                      color: Colors.green,
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, "/asistencias", arguments: token);
+                      },
+                    ),
                   _buildMenuItem(
                     icon: Icons.money,
                     title: "Nómina",
@@ -371,6 +373,24 @@ class _PerfilPageState extends State<PerfilPage> {
                 Navigator.pushNamed(context, '/mis-citas', arguments: {'token': token});
               },
             ),
+            
+            // Mi Asistencia - Solo para empleados
+            if (userRole == 'empleado')
+              ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.access_time, color: Colors.green),
+                ),
+                title: const Text("Mi Asistencia"),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/mi-asistencia');
+                },
+              ),
 
             const Divider(height: 1, thickness: 1),
 
