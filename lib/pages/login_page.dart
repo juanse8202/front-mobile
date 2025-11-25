@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../services/auth_service.dart';
+import '../services/firebase_service.dart';
 import '../widgets/custom_text_field.dart';
+import '../utils/notification_permissions.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback onToggleTheme;
@@ -47,6 +49,14 @@ class _LoginPageState extends State<LoginPage> {
         }
         print('Token guardado en secure storage');
 
+        // 🔥 REGISTRAR TOKEN FCM AL BACKEND (después de guardar el token de autenticación)
+        try {
+          await FirebaseService().registerTokenAfterLogin();
+          print('✅ Token FCM registrado en el backend');
+        } catch (e) {
+          print('⚠️ No se pudo registrar token FCM: $e');
+        }
+
         // 🔹 OBTENER ROL DEL USUARIO
         try {
           final meResult = await _authService.getMe(access);
@@ -69,18 +79,35 @@ class _LoginPageState extends State<LoginPage> {
             // Guardar rol en secure storage
             await _storage.write(key: 'user_role', value: userRole);
             print('Rol de usuario guardado: $userRole');
+            
+            // 🔥 SOLICITAR PERMISOS DE NOTIFICACIÓN (solo para clientes)
+            if (userRole == 'cliente' && mounted) {
+              await NotificationPermissions.requestNotificationPermission(context);
+            }
           } else {
             // Si no se puede obtener el rol, asumir cliente
             await _storage.write(key: 'user_role', value: 'cliente');
             print('No se pudo obtener rol, asignando "cliente" por defecto');
+            
+            // Solicitar permisos para cliente por defecto
+            if (mounted) {
+              await NotificationPermissions.requestNotificationPermission(context);
+            }
           }
         } catch (e) {
           print('Error al obtener rol: $e');
           // Si hay error, asumir cliente
           await _storage.write(key: 'user_role', value: 'cliente');
+          
+          // Solicitar permisos para cliente por defecto
+          if (mounted) {
+            await NotificationPermissions.requestNotificationPermission(context);
+          }
         }
 
-        Navigator.pushReplacementNamed(context, "/perfil", arguments: access);
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, "/perfil", arguments: access);
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

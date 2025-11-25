@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../services/auth_service.dart';
+import '../services/firebase_service.dart';
 
 class PerfilPage extends StatefulWidget {
   final VoidCallback onToggleTheme;
@@ -76,6 +77,15 @@ class _PerfilPageState extends State<PerfilPage> {
   }
 
   Future<void> _logout(BuildContext context) async {
+    // 🔥 Desregistrar token FCM antes de cerrar sesión
+    try {
+      await FirebaseService().unregisterToken();
+      debugPrint('✅ Token FCM desregistrado');
+    } catch (e) {
+      debugPrint('⚠️ Error desregistrando token FCM: $e');
+      // Continuar con logout aunque falle
+    }
+    
     // Eliminar tokens y rol del storage
     await _storage.delete(key: 'access_token');
     await _storage.delete(key: 'refresh_token');

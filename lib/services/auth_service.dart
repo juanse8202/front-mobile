@@ -144,8 +144,8 @@ class AuthService {
   }
 
   // 🔹 Login
-  Future<Map<String, dynamic>> login(String username, String password) {
-    return _post("auth/token/", {"username": username, "password": password});
+  Future<Map<String, dynamic>> login(String username, String password) async {
+    return await _post("auth/token/", {"username": username, "password": password});
   }
 
   // 🔹 Registrar usuario

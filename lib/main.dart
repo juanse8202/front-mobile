@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'services/firebase_service.dart';
 import 'pages/login_page.dart';
 import 'pages/perfil_page.dart';
 import 'pages/registro_page.dart';
@@ -50,13 +53,24 @@ Future<void> main() async {
   // 🔹 Carga las variables del archivo .env con manejo de errores
   try {
     await dotenv.load(fileName: ".env");
-    
-    // 🔹 NO inicializamos Stripe SDK ya que usamos la API REST del backend
-    // Esto evita los overlays de debug de Stripe en la UI
     debugPrint('✅ Variables de entorno cargadas');
   } catch (e) {
     debugPrint("❌ Error cargando .env: $e");
     // Continuar sin .env, usar valores por defecto
+  }
+
+  // 🔥 Inicializar Firebase
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    debugPrint('✅ Firebase inicializado');
+    
+    // Inicializar servicio de notificaciones
+    await FirebaseService().initialize();
+    debugPrint('✅ Servicio de notificaciones inicializado');
+  } catch (e) {
+    debugPrint("❌ Error inicializando Firebase: $e");
   }
 
   runApp(const MyApp());
@@ -71,6 +85,17 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _isDark = false;
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // 🔥 Configurar callback de navegación para notificaciones
+    FirebaseService().onNavigate = (String route, {Map<String, dynamic>? arguments}) {
+      debugPrint('🧭 Navegando a: $route con argumentos: $arguments');
+      navigatorKey.currentState?.pushNamed(route, arguments: arguments);
+    };
+  }
 
   // 🔹 Cambia entre tema claro y oscuro
   void _toggleTheme() {
@@ -82,6 +107,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Login Demo',
       debugShowCheckedModeBanner: false,
 

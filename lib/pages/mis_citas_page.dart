@@ -36,6 +36,22 @@ class _MisCitasPageState extends State<MisCitasPage> {
       if (_initialized) return;
       await _loadToken();
       _initialized = true;
+      
+      // 🔥 Manejar navegación desde notificaciones
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is Map && args['openDetailFor'] != null) {
+        final citaId = args['openDetailFor'];
+        debugPrint('🔔 Abriendo detalle de cita desde notificación: $citaId');
+        // Esperar a que las citas se carguen
+        await Future.delayed(const Duration(milliseconds: 500));
+        final cita = citas.firstWhere(
+          (c) => c['id'] == citaId,
+          orElse: () => null,
+        );
+        if (cita != null && mounted) {
+          _showDetalleCita(cita);
+        }
+      }
     });
   }
 

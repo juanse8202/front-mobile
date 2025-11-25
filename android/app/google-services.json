@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "413318676578",
+    "project_id": "taller-uagrm",
+    "storage_bucket": "taller-uagrm.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413318676578:android:2af1b0de035909ba5ad13b",
+        "android_client_info": {
+          "package_name": "com.example.movil"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6252TTMb-YfXw2Xm0j2uCLtaUCtJ-O3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -34,7 +34,22 @@ class _MisOrdenesPageState extends State<MisOrdenesPage> {
   @override
   void initState() {
     super.initState();
-    _loadMisOrdenes();
+    _loadMisOrdenes().then((_) {
+      // 🔥 Manejar navegación desde notificaciones
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final args = ModalRoute.of(context)?.settings.arguments;
+        if (args is Map && args['openDetailFor'] != null) {
+          final ordenId = args['openDetailFor'];
+          debugPrint('🔔 Abriendo detalle de orden desde notificación: $ordenId');
+          // Navegar al detalle de la orden específica
+          Navigator.pushNamed(
+            context,
+            '/mi-orden-detail',
+            arguments: {'ordenId': ordenId},
+          );
+        }
+      });
+    });
     _searchController.addListener(_onSearchChanged);
   }
 
